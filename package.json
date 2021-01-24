@@ -1,6 +1,6 @@
 {
   "name": "tweeter",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "MIT",
   "scripts": {
     "nx": "nx",
@@ -23,7 +23,9 @@
     "update": "nx migrate latest",
     "workspace-generator": "nx workspace-generator",
     "dep-graph": "nx dep-graph",
-    "help": "nx help"
+    "help": "nx help",
+    "release:dryrun": "standard-version -t '' --dry-run",
+    "release": "git checkout master && git pull --tags && standard-version -t '' && git push --follow-tags origin master"
   },
   "private": true,
   "dependencies": {
