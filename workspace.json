@@ -1,0 +1,250 @@
+{
+  "version": 2,
+  "projects": {
+    "tweeter-web": {
+      "root": "apps/tweeter-web",
+      "sourceRoot": "apps/tweeter-web",
+      "projectType": "application",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/next:build",
+          "outputs": [
+            "{options.outputPath}"
+          ],
+          "options": {
+            "root": "apps/tweeter-web",
+            "outputPath": "dist/apps/tweeter-web"
+          },
+          "configurations": {
+            "production": {}
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/next:server",
+          "options": {
+            "buildTarget": "tweeter-web:build",
+            "dev": true,
+            "proxyConfig": "apps/tweeter-web/proxy.conf.json"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "tweeter-web:build:production",
+              "dev": false
+            }
+          }
+        },
+        "export": {
+          "executor": "@nrwl/next:export",
+          "options": {
+            "buildTarget": "tweeter-web:build:production"
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/tweeter-web/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/apps/tweeter-web"
+          ],
+          "options": {
+            "jestConfig": "apps/tweeter-web/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "tweeter-web-e2e": {
+      "root": "apps/tweeter-web-e2e",
+      "sourceRoot": "apps/tweeter-web-e2e/src",
+      "projectType": "application",
+      "targets": {
+        "e2e": {
+          "executor": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/tweeter-web-e2e/cypress.json",
+            "tsConfig": "apps/tweeter-web-e2e/tsconfig.e2e.json",
+            "devServerTarget": "tweeter-web:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "tweeter-web:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/tweeter-web-e2e/**/*.{js,ts}"
+            ]
+          }
+        }
+      }
+    },
+    "tweeter-ui": {
+      "root": "libs/tweeter-ui",
+      "sourceRoot": "libs/tweeter-ui/src",
+      "projectType": "library",
+      "targets": {
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "libs/tweeter-ui/**/*.{ts,tsx,js,jsx}"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/libs/tweeter-ui"
+          ],
+          "options": {
+            "jestConfig": "libs/tweeter-ui/jest.config.js",
+            "passWithNoTests": true
+          }
+        },
+        "storybook": {
+          "executor": "@nrwl/storybook:storybook",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "port": 4400,
+            "config": {
+              "configFolder": "libs/tweeter-ui/.storybook"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        },
+        "build-storybook": {
+          "executor": "@nrwl/storybook:build",
+          "options": {
+            "uiFramework": "@storybook/react",
+            "outputPath": "dist/storybook/tweeter-ui",
+            "config": {
+              "configFolder": "libs/tweeter-ui/.storybook"
+            }
+          },
+          "configurations": {
+            "ci": {
+              "quiet": true
+            }
+          }
+        }
+      }
+    },
+    "tweeter-ui-e2e": {
+      "root": "apps/tweeter-ui-e2e",
+      "sourceRoot": "apps/tweeter-ui-e2e/src",
+      "projectType": "application",
+      "targets": {
+        "e2e": {
+          "executor": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/tweeter-ui-e2e/cypress.json",
+            "tsConfig": "apps/tweeter-ui-e2e/tsconfig.e2e.json",
+            "devServerTarget": "tweeter-ui:storybook"
+          },
+          "configurations": {
+            "ci": {
+              "devServerTarget": "tweeter-ui:storybook:ci"
+            }
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/tweeter-ui-e2e/**/*.{js,ts}"
+            ]
+          }
+        }
+      }
+    },
+    "tweeter-api": {
+      "root": "apps/tweeter-api",
+      "sourceRoot": "apps/tweeter-api/src",
+      "projectType": "application",
+      "prefix": "tweeter-api",
+      "targets": {
+        "build": {
+          "executor": "@nrwl/node:build",
+          "outputs": [
+            "{options.outputPath}"
+          ],
+          "options": {
+            "outputPath": "dist/apps/tweeter-api",
+            "main": "apps/tweeter-api/src/main.ts",
+            "tsConfig": "apps/tweeter-api/tsconfig.app.json",
+            "assets": [
+              "apps/tweeter-api/src/assets"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/tweeter-api/src/environments/environment.ts",
+                  "with": "apps/tweeter-api/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "executor": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "tweeter-api:build"
+          }
+        },
+        "lint": {
+          "executor": "@nrwl/linter:eslint",
+          "options": {
+            "lintFilePatterns": [
+              "apps/tweeter-api/**/*.ts"
+            ]
+          }
+        },
+        "test": {
+          "executor": "@nrwl/jest:jest",
+          "outputs": [
+            "coverage/apps/tweeter-api"
+          ],
+          "options": {
+            "jestConfig": "apps/tweeter-api/jest.config.js",
+            "passWithNoTests": true
+          }
+        }
+      }
+    }
+  },
+  "cli": {
+    "defaultCollection": "@nrwl/next"
+  },
+  "generators": {
+    "@nrwl/react": {
+      "application": {
+        "babel": true
+      }
+    },
+    "@nrwl/next": {
+      "application": {
+        "style": "styled-components",
+        "linter": "eslint"
+      }
+    }
+  },
+  "defaultProject": "tweeter-web"
+}
